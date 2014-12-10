@@ -15,6 +15,7 @@
 		04C17AD01A35E2C500E27EED /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04C17ACF1A35E2C500E27EED /* Images.xcassets */; };
 		04C17AD31A35E2C500E27EED /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 04C17AD11A35E2C500E27EED /* LaunchScreen.xib */; };
 		04C17ADF1A35E2C500E27EED /* MyWalletTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C17ADE1A35E2C500E27EED /* MyWalletTests.m */; };
+		04C17AEA1A375E9B00E27EED /* ReportsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C17AE91A375E9B00E27EED /* ReportsViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,8 @@
 		04C17AD81A35E2C500E27EED /* MyWalletTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyWalletTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		04C17ADD1A35E2C500E27EED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		04C17ADE1A35E2C500E27EED /* MyWalletTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyWalletTests.m; sourceTree = "<group>"; };
+		04C17AE81A375E9B00E27EED /* ReportsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReportsViewController.h; sourceTree = "<group>"; };
+		04C17AE91A375E9B00E27EED /* ReportsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReportsViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +93,8 @@
 				04C17AC71A35E2C500E27EED /* FirstViewController.m */,
 				04C17AC91A35E2C500E27EED /* SecondViewController.h */,
 				04C17ACA1A35E2C500E27EED /* SecondViewController.m */,
+				04C17AE81A375E9B00E27EED /* ReportsViewController.h */,
+				04C17AE91A375E9B00E27EED /* ReportsViewController.m */,
 				04C17ACC1A35E2C500E27EED /* Main.storyboard */,
 				04C17ACF1A35E2C500E27EED /* Images.xcassets */,
 				04C17AD11A35E2C500E27EED /* LaunchScreen.xib */,
@@ -228,6 +233,7 @@
 				04C17AC51A35E2C500E27EED /* AppDelegate.m in Sources */,
 				04C17AC81A35E2C500E27EED /* FirstViewController.m in Sources */,
 				04C17AC21A35E2C500E27EED /* main.m in Sources */,
+				04C17AEA1A375E9B00E27EED /* ReportsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -418,6 +424,7 @@
 				04C17AE41A35E2C500E27EED /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		04C17AE51A35E2C500E27EED /* Build configuration list for PBXNativeTarget "MyWalletTests" */ = {
 			isa = XCConfigurationList;
@@ -426,6 +433,7 @@
 				04C17AE71A35E2C500E27EED /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
