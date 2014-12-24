@@ -7,9 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface FirstViewController : UIViewController
-
+#import <CoreData/CoreData.h>
+#import "AddBillViewController.h"
+@interface FirstViewController : UIViewController <PopupPassData>
+@property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
+@property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@property (weak, nonatomic) AddBillViewController *myPopover;
 
 @end
 
