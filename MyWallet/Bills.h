@@ -2,8 +2,8 @@
 //  Bills.h
 //  MyWallet
 //
-//  Created by Ruslan on 22.12.14.
-//  Copyright (c) 2014 Volodymyr Parlah. All rights reserved.
+//  Created by Ruslan on 19.01.15.
+//  Copyright (c) 2015 Volodymyr Parlah. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,9 +14,10 @@
 @interface Bills : NSManagedObject
 
 @property (nonatomic, retain) NSString * currency;
-@property (nonatomic, retain) NSString * nameBill;
-@property (nonatomic, retain) NSNumber * sizeBill;
 @property (nonatomic, retain) NSNumber * identifier;
+@property (nonatomic, retain) NSString * nameBill;
+@property (nonatomic, retain) NSNumber * startBalance;
+@property (nonatomic, retain) NSNumber * currentBalance;
 @property (nonatomic, retain) NSSet *payment;
 @end
 

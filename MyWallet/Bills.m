@@ -2,8 +2,8 @@
 //  Bills.m
 //  MyWallet
 //
-//  Created by Ruslan on 22.12.14.
-//  Copyright (c) 2014 Volodymyr Parlah. All rights reserved.
+//  Created by Ruslan on 19.01.15.
+//  Copyright (c) 2015 Volodymyr Parlah. All rights reserved.
 //
 
 #import "Bills.h"
@@ -13,9 +13,10 @@
 @implementation Bills
 
 @dynamic currency;
-@dynamic nameBill;
-@dynamic sizeBill;
 @dynamic identifier;
+@dynamic nameBill;
+@dynamic startBalance;
+@dynamic currentBalance;
 @dynamic payment;
 
 @end

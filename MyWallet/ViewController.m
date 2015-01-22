@@ -5,7 +5,6 @@
 //  Created by Ruslan on 09.12.14.
 //  Copyright (c) 2014 Volodymyr Parlah. All rights reserved.
 //
-
 #import "ViewController.h"
 
 @interface ViewController ()
@@ -24,6 +23,7 @@
 //     [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:30/255.f green:144/255.f blue:1.f alpha:1.f]]; // set background color
 //    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor whiteColor]}; // set text color
     // Do any additional setup after loading the view.
+  
 }
 -(void)leftButtonPressed:(UIBarButtonItem*)button{
     

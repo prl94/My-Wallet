@@ -10,11 +10,12 @@
 #import "CustomTableViewCell.h"
 #import "Payment.h"
 #import "Bills.h"
-
+extern NSInteger billIndex;
 static NSInteger identifier=0;
 @interface FirstViewController ()<UITableViewDataSource, UITableViewDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UILabel *labelBalance;
+@property (weak, nonatomic) IBOutlet UILabel *labelCurrency;
 @property BOOL isHidden;
 @property NSInteger index;
 @property (strong) NSArray *bills;
@@ -27,8 +28,6 @@ static NSInteger identifier=0;
     [self getBalance];
     [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:30/255.f green:144/255.f blue:1.f alpha:1.f]]; // set background color
     self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor whiteColor]}; // set text color
-
-    
     self.index=-1;
     self.isHidden=YES;
     self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
@@ -36,18 +35,67 @@ static NSInteger identifier=0;
     self.tableView.dataSource=self;
     UIEdgeInsets inset = UIEdgeInsetsMake(self.navigationController.navigationBar.bounds.size.height*2, 0, 0, 0);
    [self.tableView setContentInset:inset];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:@"EUR" forKey:@"Currency"];
+    [defaults setObject:@(0.05) forKey:@"UAHtoUSD"];
+    [defaults setObject:@(0.015) forKey:@"RUBtoUSD"];
+    [defaults setObject:@(1.18) forKey:@"EURtoUSD"];
+
+    [defaults synchronize];
+    [self.labelCurrency setText: [defaults objectForKey:@"Currency"]];
 }
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    [self.managedObjectContext save:nil];
+    [self.managedObjectContext reset];
+    [self.tableView reloadData];
+    [self getBalance];
+}
+
 
 -(void)getBalance{
     NSArray *array = [self allObjects];
+    Bills *last = [[self allObjects]lastObject];
+    identifier=[last.identifier integerValue];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     CGFloat sum=0;
     for (Bills *b in array)
-        sum+=[b.sizeBill floatValue];
+        sum+=[self convert:[b.currentBalance floatValue]
+                      with:b.currency to:[defaults objectForKey:@"Currency"]];
+    
     if (sum>=0)
         [self.labelBalance setTextColor:[UIColor greenColor]];
     else [self.labelBalance setTextColor:[UIColor redColor]];
     self.labelBalance.text=[NSString stringWithFormat:@"%1.2f", sum];
+}
 
+-(CGFloat)convert:(CGFloat) value with:(NSString*)currency to:(NSString*)outputCurrency{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([currency isEqualToString:@"UAH"])
+        value*=[[defaults objectForKey:@"UAHtoUSD"]floatValue];
+    else if ([currency isEqualToString:@"RUB"])
+        value*=[[defaults objectForKey:@"RUBtoUSD"]floatValue];
+    else if ([currency isEqualToString:@"EUR"])
+        value*=[[defaults objectForKey:@"EURtoUSD"]floatValue];
+    value=[self convert:value to:outputCurrency];
+    return value;
+}
+-(CGFloat) convert:(CGFloat)value to:(NSString*)currency{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([currency isEqualToString:@"UAH"])
+        value/=[[defaults objectForKey:@"UAHtoUSD"]floatValue];
+    else if ([currency isEqualToString:@"RUB"])
+        value/=[[defaults objectForKey:@"RUBtoUSD"]floatValue];
+    else if ([currency isEqualToString:@"EUR"])
+        value/=[[defaults objectForKey:@"EURtoUSD"]floatValue];
+    return value;
+}
+- (IBAction)test:(id)sender {
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Information" message:@"Something text" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:@"Other", nil];
+    [alert show];
+//    UIStoryboard *storyboard = self.storyboard;
+//    AddPaymentViewController *mainViewController = [storyboard instantiateViewControllerWithIdentifier:@"MainC"];
+//    [self presentViewController:mainViewController animated:YES completion:nil];
 }
 -(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
@@ -63,10 +111,16 @@ static NSInteger identifier=0;
         [self.myPopover setMyDelegate:self];
         [self.myPopover setEditingMode:YES];
         [self.myPopover setNameBill:bill.nameBill];
-        [self.myPopover setBalanceBill:bill.sizeBill];
+        [self.myPopover setBalanceBill:bill.currentBalance];
         [self.myPopover setCurrencyIndex:3];
         [self.myPopover setIndex:self.index];
     }
+    else if ([[segue identifier] isEqualToString:@"addPayment"])
+    {
+        self.myPopoverPayment =[[[segue destinationViewController] viewControllers] objectAtIndex:0];
+        [self.myPopoverPayment setMyDelegate:self];
+    }
+
 
 }
 
@@ -81,9 +135,30 @@ static NSInteger identifier=0;
     [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationLeft];
     self.index=-1;
     [self.tableView endUpdates];
+    }
 
+-(void)resetContext{
+    [self.managedObjectContext reset];
+    [self getArrayWithData];
+    [self.tableView beginUpdates];
+    [self.tableView reloadData];
+    [self.tableView endUpdates];
 }
-
+-(void)printAllObjectsFromDataBase{
+    NSFetchRequest *request = [NSFetchRequest new];
+    [request setEntity:[NSEntityDescription entityForName:@"Payment" inManagedObjectContext:self.managedObjectContext]];
+    for (id s in [self.managedObjectContext executeFetchRequest:request error:nil]) {
+        if ([s isKindOfClass:[Payment class]])
+        {
+            Payment *temp = s;
+            if ([temp.payment.nameBill isEqual:@"ttt"])
+            NSLog(@"%@ - %@ - %@ - Name - %@",temp.date, temp.value, temp.kindOfPayment, temp.payment.nameBill);
+            
+        }
+        
+        
+    }
+}
 
 #pragma mark BillsData
 
@@ -126,7 +201,8 @@ static NSInteger identifier=0;
             break;
     }
     bill.nameBill=name;
-    bill.sizeBill=@([balance floatValue]);
+    bill.currentBalance=@([bill.currentBalance floatValue] - [bill.startBalance floatValue]+[balance floatValue]);
+    bill.startBalance=@([balance floatValue]);
     bill.currency=currency;
     [self.managedObjectContext save:nil];
     [self getBalance];
@@ -147,7 +223,7 @@ static NSInteger identifier=0;
     NSArray *array = [self.managedObjectContext executeFetchRequest:request
                                                               error:nil];
     
-    return  [array objectAtIndex:self.index];
+    return  [array objectAtIndex:index];
     
 }
 
@@ -155,8 +231,11 @@ static NSInteger identifier=0;
     Bills *bill = [NSEntityDescription insertNewObjectForEntityForName:@"Bills" inManagedObjectContext:self.managedObjectContext];
     bill.currency=currency;
     bill.nameBill=name;
-    bill.sizeBill=@([size floatValue]);
-    bill.identifier=@(identifier++);
+    bill.startBalance=@([size floatValue]);
+    bill.currentBalance=@([size floatValue]);
+    identifier=identifier+1;
+    bill.identifier=@(identifier);
+    NSLog(@"Bill identifier is - %ld", identifier);
     [self.managedObjectContext save:nil];
     [self getBalance];
     [self.myPopover dismissViewControllerAnimated:YES completion:^{
@@ -189,7 +268,8 @@ static NSInteger identifier=0;
         
     }
     cell.billName.text=temp.nameBill;
-    cell.billSize.text=[NSString stringWithFormat:@"%@", temp.sizeBill];
+    cell.billSize.text=[NSString stringWithFormat:@"%1.2f", [temp.currentBalance floatValue]];
+    [cell.billSize setTextColor:[self getLabelColor:temp.currentBalance]];
     cell.currency.text=temp.currency;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
@@ -202,6 +282,12 @@ static NSInteger identifier=0;
     cell.backgroundColor=[UIColor whiteColor];
     return cell;
 }
+-(UIColor*)getLabelColor:(NSNumber*)number{
+    if ([number floatValue]>=0)
+        return [UIColor greenColor];
+    else
+        return [UIColor redColor];
+}
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.row==self.index){
@@ -213,7 +299,7 @@ static NSInteger identifier=0;
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (self.index == indexPath.row)
         self.index=-1;
-    else self.index=indexPath.row;
+    else billIndex=self.index=indexPath.row;
     [tableView beginUpdates];
     [self.tableView reloadData];
 //   [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationf];
@@ -233,6 +319,7 @@ static NSInteger identifier=0;
         }
     }
 }
+
 #pragma mark - Core Data stack
 
 @synthesize managedObjectContext = _managedObjectContext;
