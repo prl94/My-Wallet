@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6254" systemVersion="14B25" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Bills" representedClassName="Bills" parentEntity="Object" syncable="YES">
+        <attribute name="currency" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="currentBalance" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="identifier" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="nameBill" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="startBalance" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <relationship name="payment" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Payment" inverseName="payment" inverseEntity="Payment" syncable="YES"/>
+    </entity>
+    <entity name="Object" syncable="YES"/>
+    <entity name="Payment" representedClassName="Payment" parentEntity="Object" syncable="YES">
+        <attribute name="comment" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="date" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="descriptionOfPayment" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="identifier" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="kindOfPayment" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="toBill" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="value" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <relationship name="payment" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Bills" inverseName="payment" inverseEntity="Bills" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Bills" positionX="-54" positionY="-8" width="128" height="133"/>
+        <element name="Object" positionX="-54" positionY="-126" width="128" height="43"/>
+        <element name="Payment" positionX="171" positionY="-0" width="128" height="163"/>
+    </elements>
+</model>
