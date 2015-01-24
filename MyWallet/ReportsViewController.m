@@ -7,7 +7,7 @@
 //
 
 #import "ReportsViewController.h"
-static NSInteger counter = 0;
+static NSInteger counter;
 
 
 @interface ReportsViewController ()
@@ -17,6 +17,8 @@ static NSInteger counter = 0;
 @property (strong, nonatomic) IBOutlet UILabel *dateLabel;
 
 @property (strong, nonatomic) IBOutlet UISegmentedControl *segmented;
+@property (weak, nonatomic) IBOutlet UIImageView *imageTableViewCell;
+
 @end
 
 
@@ -175,12 +177,12 @@ static NSInteger counter = 0;
     
     NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear |NSCalendarUnitWeekOfYear fromDate:sevenDaysAgo];
     
-    NSLog(@"%i",[components month]); //gives you month
-    NSLog(@"%i",[components day]); //gives you month
-    NSLog(@"%i",[components weekOfYear]); //gives you month
-    NSLog(@"%i",[components year]); //gives you month
+    NSLog(@"%li",(long)[components month]); //gives you month
+    NSLog(@"%li",(long)[components day]); //gives you month
+    NSLog(@"%li",(long)[components weekOfYear]); //gives you month
+    NSLog(@"%li",(long)[components year]); //gives you month
 
-    NSString *year = [NSString stringWithFormat:@"Год %i",[components year]];
+    NSString *year = [NSString stringWithFormat:@"Год %li",(long)[components year]];
     
     self.dateLabel.text = year;
     
@@ -200,10 +202,10 @@ static NSInteger counter = 0;
     
     NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear |NSCalendarUnitWeekOfYear fromDate:sevenDaysAgo];
     
-    NSLog(@"%i",[components month]); //gives you month
-    NSLog(@"%i",[components day]); //gives you month
-    NSLog(@"%i",[components weekOfYear]); //gives you month
-    NSLog(@"%i",[components year]); //gives you month
+    NSLog(@"%li",(long)[components month]); //gives you month
+    NSLog(@"%li",(long)[components day]); //gives you month
+    NSLog(@"%li",(long)[components weekOfYear]); //gives you month
+    NSLog(@"%li",(long)[components year]); //gives you month
     
     int monthNumber = [components month];
     
@@ -226,7 +228,7 @@ static NSInteger counter = 0;
     NSString * dayString = [[dateFormatter stringFromDate:date] capitalizedString];
     NSLog(@"day: %@", dayString);
     
-    NSString *month = [NSString stringWithFormat:@"%@, %i",monthString,[components year]];
+    NSString *month = [NSString stringWithFormat:@"%@, %li",monthString,(long)[components year]];
     
     self.dateLabel.text = month;
 
@@ -298,11 +300,15 @@ static NSInteger counter = 0;
     return 5;
 }
 
-//- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section{
-//
-//return @"footer";
-//
-//}
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section{
+  
+    NSString *summary = [NSString stringWithFormat:@"Итого %f",225.00];
+    
+    if (section == 1) {
+        return summary;
+    }else
+        return summary;
+}
 
 // Row display. Implementers should *always* try to reuse cells by setting each cell's reuseIdentifier and querying for available reusable cells with dequeueReusableCellWithIdentifier:
 // Cell gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)
@@ -320,6 +326,7 @@ static NSInteger counter = 0;
     
     
     cell.textLabel.text = @"text";
+  //  cell.
     return cell;
 
 
