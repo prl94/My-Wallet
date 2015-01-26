@@ -26,6 +26,8 @@
     [self.textFieldSum becomeFirstResponder];
     [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:30/255.f green:144/255.f blue:1.f alpha:1.f]]; // set background color
     self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor whiteColor]};
+    [self.navigationItem.leftBarButtonItem setTintColor:[UIColor whiteColor]];
+    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
     // Do any additional setup after loading the view.
 }
 
@@ -45,7 +47,6 @@
 }
 
 - (IBAction)backButtonPressed:(id)sender {
-    self.tabBarController.selectedIndex = 0;
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
