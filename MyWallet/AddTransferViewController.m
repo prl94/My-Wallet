@@ -45,9 +45,11 @@
 }
 
 - (IBAction)backButtonPressed:(id)sender {
+    self.tabBarController.selectedIndex = 0;
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
+
 }
 - (IBAction)addButtonPressed:(id)sender {
     if (self.textFieldSum.text.length!=0){
@@ -71,17 +73,9 @@
         [self.textFieldSum resignFirstResponder];
         [self.datePicker setHidden:NO];
         return NO;
-        
     }
     else return YES;
 }
-//- (BOOL)textFieldShouldReturn:(UITextField *)textField{
-//    if ([textField isEqual:self.textboxInfo])
-//        [self.textFieldSu becomeFirstResponder];
-//    [textField resignFirstResponder];
-//    return YES;
-//}
-
 
 /*
 #pragma mark - Navigation

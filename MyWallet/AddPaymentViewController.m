@@ -7,6 +7,7 @@
 //
 
 #import "AddPaymentViewController.h"
+#import "FirstViewController.h"
 #import "Bills.h"
 #import "Payment.h"
 #import <CoreData/CoreData.h>
@@ -43,7 +44,14 @@ static NSInteger identifier=0;
     [self.textFieldSu becomeFirstResponder];
     self.index=-1;
     [self.rightButton setEnabled:NO];
-    NSLog(@"%ld", billIndex);
+    
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self.textboxInfo setText:@""];
+    [self.textboxToday setText:@"Сегодня"];
+    [self.textFieldSu setText:@""];
 }
 - (IBAction)segmentPressed:(id)sender {
     if (self.segmentPayment.selectedSegmentIndex==1 || self.segmentPayment.selectedSegmentIndex==0){
@@ -92,10 +100,13 @@ static NSInteger identifier=0;
 
 }
 - (IBAction)cancelButtonPressed:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:^{
+    if ([self.restorationIdentifier isEqualToString:@"1"]){
+        self.tabBarController.selectedIndex = 0;
+    }
+    else [self dismissViewControllerAnimated:YES completion:^{
         
     }];
-}
+   }
 - (IBAction)addButtonPressed:(id)sender {
     switch (self.segmentPayment.selectedSegmentIndex) {
         case 0:
@@ -105,9 +116,7 @@ static NSInteger identifier=0;
             [self addIncome];
             break;
     }
-    [self.myDelegate resetContext];
-    [self dismissViewControllerAnimated:YES completion:^{
-    }];
+    [self cancelButtonPressed:self];
 
 }
 
@@ -265,19 +274,21 @@ static NSInteger identifier=0;
     [textField resignFirstResponder];
     return YES;
 }
-// called when 'return' key pressed. return NO to ignore.
 
 
 -(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([[segue identifier] isEqualToString:@"addTransfer"])
-    {
-        self.myPopover =[[[segue destinationViewController] viewControllers] objectAtIndex:0];
+//    if ([[segue identifier] isEqualToString:@"addTransfer"])
+//    {
+    self.myPopover =[[[segue destinationViewController] viewControllers] objectAtIndex:0];
         [self.myPopover setMyDelegate:self];
-    }
+//    }
 }
 
 -(BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender{
+    if ([identifier isEqual:@"addPayment"] & (self.textFieldSu.text.length!=0))
+        return YES;
+
     if ([identifier isEqual:@"addTransfer"]){
         if (([self.tableViewOut indexPathForSelectedRow]!=nil) & ([self.tableViewIn indexPathForSelectedRow]!=nil))
             return YES;

@@ -36,13 +36,10 @@ static NSInteger identifier=0;
     UIEdgeInsets inset = UIEdgeInsetsMake(self.navigationController.navigationBar.bounds.size.height*2, 0, 0, 0);
    [self.tableView setContentInset:inset];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:@"EUR" forKey:@"Currency"];
     [defaults setObject:@(0.05) forKey:@"UAHtoUSD"];
     [defaults setObject:@(0.015) forKey:@"RUBtoUSD"];
     [defaults setObject:@(1.18) forKey:@"EURtoUSD"];
-
     [defaults synchronize];
-    [self.labelCurrency setText: [defaults objectForKey:@"Currency"]];
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
@@ -59,14 +56,20 @@ static NSInteger identifier=0;
     identifier=[last.identifier integerValue];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     CGFloat sum=0;
+    if ([defaults objectForKey:@"Currency"] == nil)
+    {
+        [defaults setObject:@"EUR" forKey:@"Currency"];
+    }
     for (Bills *b in array)
         sum+=[self convert:[b.currentBalance floatValue]
                       with:b.currency to:[defaults objectForKey:@"Currency"]];
-    
     if (sum>=0)
         [self.labelBalance setTextColor:[UIColor greenColor]];
     else [self.labelBalance setTextColor:[UIColor redColor]];
     self.labelBalance.text=[NSString stringWithFormat:@"%1.2f", sum];
+    [self.labelCurrency setText: [defaults objectForKey:@"Currency"]];
+    [defaults synchronize];
+
 }
 
 -(CGFloat)convert:(CGFloat) value with:(NSString*)currency to:(NSString*)outputCurrency{
@@ -93,9 +96,6 @@ static NSInteger identifier=0;
 - (IBAction)test:(id)sender {
     UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Information" message:@"Something text" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:@"Other", nil];
     [alert show];
-//    UIStoryboard *storyboard = self.storyboard;
-//    AddPaymentViewController *mainViewController = [storyboard instantiateViewControllerWithIdentifier:@"MainC"];
-//    [self presentViewController:mainViewController animated:YES completion:nil];
 }
 -(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
@@ -111,8 +111,15 @@ static NSInteger identifier=0;
         [self.myPopover setMyDelegate:self];
         [self.myPopover setEditingMode:YES];
         [self.myPopover setNameBill:bill.nameBill];
-        [self.myPopover setBalanceBill:bill.currentBalance];
-        [self.myPopover setCurrencyIndex:3];
+        [self.myPopover setBalanceBill:bill.startBalance];
+        NSNumber *currencyIndex=@(0);
+        if ([bill.currency isEqualToString:@"EUR"])
+            currencyIndex=@(1);
+        else if ([bill.currency isEqualToString:@"UAH"])
+            currencyIndex=@(2);
+        else if ([bill.currency isEqualToString:@"RUB"])
+            currencyIndex=@(3);
+        [self.myPopover setCurrencyIndex:[currencyIndex integerValue]];
         [self.myPopover setIndex:self.index];
     }
     else if ([[segue identifier] isEqualToString:@"addPayment"])

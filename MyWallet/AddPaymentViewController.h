@@ -8,12 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "AddTransferViewController.h"
+#import "BillsTableViewController.h"
 @protocol PaymentProtocol <NSObject>
 @required
 -(void)resetContext;
 @end
 
-@interface AddPaymentViewController : UIViewController<UITabBarDelegate, UITableViewDataSource, TransferProtocol>
+@interface AddPaymentViewController : UIViewController<UITabBarDelegate, UITableViewDataSource, TransferProtocol, BillProtocol>
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *rightButton;
 @property (strong, nonatomic) id myDelegate;
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;

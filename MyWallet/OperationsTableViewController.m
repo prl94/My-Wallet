@@ -24,9 +24,10 @@ extern NSInteger billIndex;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-//    self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:30/255.f green:144/255.f blue:1.f alpha:1.f]]; // set background color
     self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor whiteColor]}; // set text color
+    [self.navigationItem.leftBarButtonItem setTintColor:[UIColor whiteColor]];
+    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
@@ -86,6 +87,9 @@ extern NSInteger billIndex;
         [self.tableView setScrollEnabled:NO];
     }
 
+}
+- (IBAction)addButtonPressed:(id)sender {
+    self.tabBarController.selectedIndex = 2;
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{

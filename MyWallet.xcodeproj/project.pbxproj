@@ -13,6 +13,9 @@
 		04C17AD01A35E2C500E27EED /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04C17ACF1A35E2C500E27EED /* Images.xcassets */; };
 		04C17AD31A35E2C500E27EED /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 04C17AD11A35E2C500E27EED /* LaunchScreen.xib */; };
 		04C17ADF1A35E2C500E27EED /* MyWalletTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C17ADE1A35E2C500E27EED /* MyWalletTests.m */; };
+		2207603C1A75CAF00022AEB5 /* SettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2207603B1A75CAF00022AEB5 /* SettingsTableViewController.m */; };
+		2207603F1A75D0780022AEB5 /* CurrenciesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2207603E1A75D0780022AEB5 /* CurrenciesTableViewController.m */; };
+		220760421A76CE510022AEB5 /* BillsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 220760411A76CE510022AEB5 /* BillsTableViewController.m */; };
 		223428CB1A402D4400AFE40B /* AddBillViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 223428CA1A402D4400AFE40B /* AddBillViewController.m */; };
 		225392BE1A4491AF00EF3BC7 /* AddPaymentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 225392BD1A4491AF00EF3BC7 /* AddPaymentViewController.m */; };
 		226ABAB21A37111C007137BC /* CustomTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 226ABAB01A37111C007137BC /* CustomTableViewCell.m */; };
@@ -49,6 +52,12 @@
 		04C17AD81A35E2C500E27EED /* MyWalletTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyWalletTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		04C17ADD1A35E2C500E27EED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		04C17ADE1A35E2C500E27EED /* MyWalletTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyWalletTests.m; sourceTree = "<group>"; };
+		2207603A1A75CAF00022AEB5 /* SettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsTableViewController.h; sourceTree = "<group>"; };
+		2207603B1A75CAF00022AEB5 /* SettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsTableViewController.m; sourceTree = "<group>"; };
+		2207603D1A75D0780022AEB5 /* CurrenciesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CurrenciesTableViewController.h; sourceTree = "<group>"; };
+		2207603E1A75D0780022AEB5 /* CurrenciesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CurrenciesTableViewController.m; sourceTree = "<group>"; };
+		220760401A76CE510022AEB5 /* BillsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BillsTableViewController.h; sourceTree = "<group>"; };
+		220760411A76CE510022AEB5 /* BillsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BillsTableViewController.m; sourceTree = "<group>"; };
 		223428C91A402D4400AFE40B /* AddBillViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddBillViewController.h; sourceTree = "<group>"; };
 		223428CA1A402D4400AFE40B /* AddBillViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddBillViewController.m; sourceTree = "<group>"; };
 		225392BC1A4491AF00EF3BC7 /* AddPaymentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddPaymentViewController.h; sourceTree = "<group>"; };
@@ -110,11 +119,13 @@
 		04C17ABE1A35E2C500E27EED /* MyWallet */ = {
 			isa = PBXGroup;
 			children = (
+				220760391A75CAB10022AEB5 /* Settings */,
 				223428BD1A3F87CF00AFE40B /* Bills */,
 				04C17AC31A35E2C500E27EED /* AppDelegate.h */,
 				04C17AC41A35E2C500E27EED /* AppDelegate.m */,
 				226ABAB41A379092007137BC /* ViewController.h */,
 				226ABAB51A379092007137BC /* ViewController.m */,
+				22810A4C1A4F59DE002342B1 /* Main.storyboard */,
 				04C17ACF1A35E2C500E27EED /* Images.xcassets */,
 				04C17AD11A35E2C500E27EED /* LaunchScreen.xib */,
 				04C17ABF1A35E2C500E27EED /* Supporting Files */,
@@ -151,6 +162,17 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		220760391A75CAB10022AEB5 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				2207603A1A75CAF00022AEB5 /* SettingsTableViewController.h */,
+				2207603B1A75CAF00022AEB5 /* SettingsTableViewController.m */,
+				2207603D1A75D0780022AEB5 /* CurrenciesTableViewController.h */,
+				2207603E1A75D0780022AEB5 /* CurrenciesTableViewController.m */,
+			);
+			name = Settings;
+			sourceTree = "<group>";
+		};
 		223428BD1A3F87CF00AFE40B /* Bills */ = {
 			isa = PBXGroup;
 			children = (
@@ -163,11 +185,12 @@
 				223428CA1A402D4400AFE40B /* AddBillViewController.m */,
 				225392BC1A4491AF00EF3BC7 /* AddPaymentViewController.h */,
 				225392BD1A4491AF00EF3BC7 /* AddPaymentViewController.m */,
-				22810A4C1A4F59DE002342B1 /* Main.storyboard */,
 				22810A561A503380002342B1 /* AddTransferViewController.h */,
 				22810A571A503380002342B1 /* AddTransferViewController.m */,
 				22E613EB1A50B8C600EAC27F /* PaymentTableViewController.h */,
 				22E613EC1A50B8C600EAC27F /* PaymentTableViewController.m */,
+				220760401A76CE510022AEB5 /* BillsTableViewController.h */,
+				220760411A76CE510022AEB5 /* BillsTableViewController.m */,
 			);
 			name = Bills;
 			sourceTree = "<group>";
@@ -283,9 +306,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2207603C1A75CAF00022AEB5 /* SettingsTableViewController.m in Sources */,
 				226ABAB61A379092007137BC /* ViewController.m in Sources */,
+				220760421A76CE510022AEB5 /* BillsTableViewController.m in Sources */,
 				04C17AC51A35E2C500E27EED /* AppDelegate.m in Sources */,
 				225392BE1A4491AF00EF3BC7 /* AddPaymentViewController.m in Sources */,
+				2207603F1A75D0780022AEB5 /* CurrenciesTableViewController.m in Sources */,
 				223428CB1A402D4400AFE40B /* AddBillViewController.m in Sources */,
 				22C67BFE1A6C7F9E00FDB141 /* Payment.m in Sources */,
 				22C67C011A6D7B3D00FDB141 /* Bills.m in Sources */,
