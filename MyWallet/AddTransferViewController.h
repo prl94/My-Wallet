@@ -14,4 +14,6 @@
 
 @interface AddTransferViewController : UIViewController
 @property (strong, nonatomic) id myDelegate;
+@property (strong) NSManagedObjectContext *managedObjectContext;
+
 @end

@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "AppDelegate.h"
 #import "AddTransferViewController.h"
 #import "BillsTableViewController.h"
 @protocol PaymentProtocol <NSObject>
@@ -17,10 +18,10 @@
 @interface AddPaymentViewController : UIViewController<UITabBarDelegate, UITableViewDataSource, TransferProtocol, BillProtocol>
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *rightButton;
 @property (strong, nonatomic) id myDelegate;
-@property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
-@property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
-@property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@property (strong)AppDelegate *appDelegate;
 @property (weak, nonatomic) AddTransferViewController *myPopover;
+@property (weak, nonatomic) BillsTableViewController *billsPopover;
 @property (strong) NSArray *bills;
 @property (strong) NSMutableArray *billsWithoutSelectedIndex;
+@property (strong) NSManagedObjectContext *managedObjectContext;
 @end

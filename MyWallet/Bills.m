@@ -18,5 +18,4 @@
 @dynamic startBalance;
 @dynamic currentBalance;
 @dynamic payment;
-
 @end

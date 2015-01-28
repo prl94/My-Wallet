@@ -1991,7 +1991,7 @@
                                     <color key="titleShadowColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="cTf-sV-8Yg" kind="show" identifier="addPayment" id="gbZ-vf-qti"/>
+                                    <segue destination="cTf-sV-8Yg" kind="show" identifier="addPayment" id="jz8-5h-pdq"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Дата" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Kr-Sm-gBj">
@@ -2126,7 +2126,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kKl-5g-3Eg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3545" y="-1547"/>
+            <point key="canvasLocation" x="3560" y="-1475"/>
         </scene>
         <!--Шаг 2-->
         <scene sceneID="xZ6-jt-6Gk">

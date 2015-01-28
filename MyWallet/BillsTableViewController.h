@@ -7,16 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <CoreData/CoreData.h>
+#import "AppDelegate.h"
 @protocol BillProtocol <NSObject>
 @required
 - (IBAction)addButtonPressed:(id)sender;
 @end
 
 @interface BillsTableViewController : UITableViewController
-@property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
-@property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
-@property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@property (strong) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) id myDelegate;
 
 @end

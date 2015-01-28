@@ -9,9 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface PaymentTableViewController : UITableViewController
-@property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
-@property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
-@property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
 @property (strong) NSString *kindOfPayment;
 @property (strong) NSDate *date;

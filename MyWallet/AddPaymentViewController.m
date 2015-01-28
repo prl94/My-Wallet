@@ -10,7 +10,6 @@
 #import "FirstViewController.h"
 #import "Bills.h"
 #import "Payment.h"
-#import <CoreData/CoreData.h>
 extern NSInteger billIndex;
 static NSInteger identifier=0;
 
@@ -44,7 +43,8 @@ static NSInteger identifier=0;
     [self.textFieldSu becomeFirstResponder];
     self.index=-1;
     [self.rightButton setEnabled:NO];
-    
+    self.appDelegate=[[UIApplication sharedApplication]delegate];
+    self.managedObjectContext=self.appDelegate.managedObjectContext;
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -127,7 +127,7 @@ static NSInteger identifier=0;
     if (self.textFieldSu.text.length!=0)
     {
         Bills *currentBill = [self getBill:billIndex];
-        Payment *temp = [NSEntityDescription insertNewObjectForEntityForName:@"Payment" inManagedObjectContext:self.managedObjectContext];
+        Payment *temp = [NSEntityDescription insertNewObjectForEntityForName:@"Payment" inManagedObjectContext:self.appDelegate.managedObjectContext];
         if ([self.labelDate.text isEqual:@"Сегодня"])
         temp.date=[NSDate date];
         else temp.date=self.datePicker.date;
@@ -147,7 +147,7 @@ static NSInteger identifier=0;
     if (self.textFieldSu.text.length!=0)
     {
         Bills *currentBill = [self getBill:billIndex];
-        Payment *temp = [NSEntityDescription insertNewObjectForEntityForName:@"Payment" inManagedObjectContext:self.managedObjectContext];
+        Payment *temp = [NSEntityDescription insertNewObjectForEntityForName:@"Payment" inManagedObjectContext:self.appDelegate.managedObjectContext];
         if ([self.labelDate.text isEqual:@"Сегодня"])
             temp.date=[NSDate date];
         else temp.date=self.datePicker.date;
@@ -158,7 +158,7 @@ static NSInteger identifier=0;
         identifier=identifier+1;
         currentBill.currentBalance= @([currentBill.currentBalance floatValue] + [temp.value floatValue]);
         [currentBill addPaymentObject:temp];
-        [self.managedObjectContext save:nil];
+        [self.appDelegate.managedObjectContext save:nil];
     }
 
 }
@@ -169,10 +169,9 @@ static NSInteger identifier=0;
     Bills *firstBill = [self.bills objectAtIndex:[self.tableViewOut indexPathForSelectedRow].row];
     Bills *secondBill=[self.billsWithoutSelectedIndex objectAtIndex:[self.tableViewIn indexPathForSelectedRow].row];
     firstBill.currentBalance= @([firstBill.currentBalance floatValue] - [sum floatValue]);
-    secondBill.currentBalance= @([secondBill.currentBalance floatValue] + [self convert:[sum floatValue] with:firstBill.currency to:secondBill.currency]);
-    Payment *firstTransfer = [NSEntityDescription insertNewObjectForEntityForName:@"Payment" inManagedObjectContext:self.managedObjectContext];
+    secondBill.currentBalance= @([secondBill.currentBalance floatValue] + [self.appDelegate convert:[sum floatValue] with:firstBill.currency to:secondBill.currency]);
+    Payment *firstTransfer = [NSEntityDescription insertNewObjectForEntityForName:@"Payment" inManagedObjectContext:self.appDelegate.managedObjectContext];
     
-
     firstTransfer.value=@([sum floatValue]);
     firstTransfer.kindOfPayment=@"Перевод";
     firstTransfer.comment=comment;
@@ -185,7 +184,7 @@ static NSInteger identifier=0;
     
     
     
-    [self.managedObjectContext save:nil];
+    [self.appDelegate.managedObjectContext save:nil];
     [self.myDelegate resetContext];
     [self dismissViewControllerAnimated:NO completion:^{
         [self dismissViewControllerAnimated:NO completion:^{
@@ -195,34 +194,13 @@ static NSInteger identifier=0;
     
 }
 
--(CGFloat)convert:(CGFloat) value with:(NSString*)currency to:(NSString*)outputCurrency{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if ([currency isEqualToString:@"UAH"])
-        value*=[[defaults objectForKey:@"UAHtoUSD"]floatValue];
-    else if ([currency isEqualToString:@"RUB"])
-        value*=[[defaults objectForKey:@"RUBtoUSD"]floatValue];
-    else if ([currency isEqualToString:@"EUR"])
-        value*=[[defaults objectForKey:@"EURtoUSD"]floatValue];
-    value=[self convert:value to:outputCurrency];
-    return value;
-}
--(CGFloat) convert:(CGFloat)value to:(NSString*)currency{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if ([currency isEqualToString:@"UAH"])
-        value/=[[defaults objectForKey:@"UAHtoUSD"]floatValue];
-    else if ([currency isEqualToString:@"RUB"])
-        value/=[[defaults objectForKey:@"RUBtoUSD"]floatValue];
-    else if ([currency isEqualToString:@"EUR"])
-        value/=[[defaults objectForKey:@"EURtoUSD"]floatValue];
-    return value;
-}
 
 -(Bills *)getBill:(NSInteger)index{
     NSFetchRequest *request = [[NSFetchRequest alloc]init];
     
-    NSEntityDescription *description = [NSEntityDescription entityForName:@"Bills" inManagedObjectContext:self.managedObjectContext];
+    NSEntityDescription *description = [NSEntityDescription entityForName:@"Bills" inManagedObjectContext:self.appDelegate.managedObjectContext];
     [request setEntity:description];
-    NSArray *array = [self.managedObjectContext executeFetchRequest:request
+    NSArray *array = [self.appDelegate.managedObjectContext executeFetchRequest:request
                                                               error:nil];
     
     return  [array objectAtIndex:index];
@@ -236,7 +214,6 @@ static NSInteger identifier=0;
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"d.MM.YY"];
     NSString *prettyVersion = [dateFormat stringFromDate:date];
-    NSLog(@"%@", prettyVersion );
     if ([([dateFormat stringFromDate:[NSDate date]])isEqual:prettyVersion])
         self.textboxToday.text=@"Сегодня";
     else self.textboxToday.text=prettyVersion;
@@ -247,10 +224,10 @@ static NSInteger identifier=0;
     self.bills=[NSMutableArray array];
     NSFetchRequest *request = [[NSFetchRequest alloc]init];
     [request setReturnsObjectsAsFaults:NO];
-    NSEntityDescription *description = [NSEntityDescription entityForName:@"Bills" inManagedObjectContext:self.managedObjectContext];
+    NSEntityDescription *description = [NSEntityDescription entityForName:@"Bills" inManagedObjectContext:self.appDelegate.managedObjectContext];
     [request setEntity:description];
     NSError *error = nil;
-    self.bills = [ self.managedObjectContext executeFetchRequest:request error:&error];
+    self.bills = [ self.appDelegate.managedObjectContext executeFetchRequest:request error:&error];
 }
 
 
@@ -278,11 +255,17 @@ static NSInteger identifier=0;
 
 -(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-//    if ([[segue identifier] isEqualToString:@"addTransfer"])
-//    {
-    self.myPopover =[[[segue destinationViewController] viewControllers] objectAtIndex:0];
+    if ([segue.identifier isEqual:@"addTransfer"]){
+
+        self.myPopover =[[[segue destinationViewController] viewControllers] objectAtIndex:0];
         [self.myPopover setMyDelegate:self];
-//    }
+    }
+    else   if ([segue.identifier isEqual:@"addPayment"]){
+        self.billsPopover=[segue destinationViewController];
+        [self.billsPopover setMyDelegate:self];
+        [self.billsPopover setManagedObjectContext:self.managedObjectContext];
+    }
+
 }
 
 -(BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender{
@@ -382,84 +365,6 @@ static NSInteger identifier=0;
     
     return headerView;
 }
-
-- (void)saveContext
-{
-    NSError *error = nil;
-    NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
-    if (managedObjectContext != nil) {
-        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
-            // Replace this implementation with code to handle the error appropriately.
-            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        }
-    }
-}
-#pragma mark - Core Data stack
-
-@synthesize managedObjectContext = _managedObjectContext;
-@synthesize managedObjectModel = _managedObjectModel;
-@synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
-
-- (NSURL *)applicationDocumentsDirectory {
-    // The directory the application uses to store the Core Data store file. This code uses a directory named "none.CoreDataProject" in the application's documents directory.
-    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-}
-
-- (NSManagedObjectModel *)managedObjectModel {
-    // The managed object model for the application. It is a fatal error for the application not to be able to find and load its model.
-    if (_managedObjectModel != nil) {
-        return _managedObjectModel;
-    }
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"CoreDataProject" withExtension:@"momd"];
-    _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
-    return _managedObjectModel;
-}
-
-- (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
-    // The persistent store coordinator for the application. This implementation creates and return a coordinator, having added the store for the application to it.
-    if (_persistentStoreCoordinator != nil) {
-        return _persistentStoreCoordinator;
-    }
-    
-    // Create the coordinator and store
-    
-    _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"CoreDataProject.sqlite"];
-    NSError *error = nil;
-    NSString *failureReason = @"There was an error creating or loading the application's saved data.";
-    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
-        // Report any error we got.
-        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-        dict[NSLocalizedDescriptionKey] = @"Failed to initialize the application's saved data";
-        dict[NSLocalizedFailureReasonErrorKey] = failureReason;
-        dict[NSUnderlyingErrorKey] = error;
-        error = [NSError errorWithDomain:@"YOUR_ERROR_DOMAIN" code:9999 userInfo:dict];
-        // Replace this with code to handle the error appropriately.
-        // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
-    }
-    
-    return _persistentStoreCoordinator;
-}
-
-- (NSManagedObjectContext *)managedObjectContext {
-    // Returns the managed object context for the application (which is already bound to the persistent store coordinator for the application.)
-    if (_managedObjectContext != nil) {
-        return _managedObjectContext;
-    }
-    
-    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-    if (!coordinator) {
-        return nil;
-    }
-    _managedObjectContext = [[NSManagedObjectContext alloc] init];
-    [_managedObjectContext setPersistentStoreCoordinator:coordinator];
-    return _managedObjectContext;
-}
-
 
 
 @end
