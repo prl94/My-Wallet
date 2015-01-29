@@ -14,8 +14,10 @@
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@property (strong) NSUserDefaults *defaults;
 
 -(CGFloat)convert:(CGFloat) value with:(NSString*)currency to:(NSString*)outputCurrency;
 -(CGFloat) convert:(CGFloat)value to:(NSString*)currency;
+-(UIColor*)getLabelColor:(NSNumber*)number;
 @end
 

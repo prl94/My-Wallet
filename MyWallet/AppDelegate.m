@@ -17,8 +17,36 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    
+    
+    self.defaults = [NSUserDefaults standardUserDefaults];
+    [self.defaults setObject:@(0.05) forKey:@"UAHtoUSD"];
+    [self.defaults setObject:@(0.015) forKey:@"RUBtoUSD"];
+    [self.defaults setObject:@(1.18) forKey:@"EURtoUSD"];
+    if ([self.defaults objectForKey:@"Currency"] == nil)
+    {
+        [self.defaults setObject:@"EUR" forKey:@"Currency"];
+    }
+    
+    if ([self.defaults objectForKey:@"IdentifierBills"] == nil)
+    {
+        [self.defaults setObject:@(0) forKey:@"IdentifierBills"];
+    }
+    
+    if ([self.defaults objectForKey:@"IdentifierPayments"] == nil)
+    {
+        [self.defaults setObject:@(0) forKey:@"IdentifierPayments"];
+    }
+
+    
+    [self.defaults synchronize];
+    
+
+    
     return YES;
 }
+
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -63,6 +91,15 @@
     else if ([currency isEqualToString:@"EUR"])
         value/=[[defaults objectForKey:@"EURtoUSD"]floatValue];
     return value;
+}
+
+
+
+-(UIColor*)getLabelColor:(NSNumber*)number{
+    if ([number floatValue]>=0)
+        return [UIColor greenColor];
+    else
+        return [UIColor redColor];
 }
 
 

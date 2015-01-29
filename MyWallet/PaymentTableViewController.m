@@ -87,15 +87,14 @@
 
 
 -(Bills *)getBillFromIdentifier:(NSNumber*)identifier{
-    NSFetchRequest *request = [[NSFetchRequest alloc]init];
-    
+    NSFetchRequest *request = [[NSFetchRequest alloc]init];    
     NSEntityDescription *description = [NSEntityDescription entityForName:@"Bills" inManagedObjectContext:self.appDelegate.managedObjectContext];
     [request setEntity:description];
     NSArray *array = [self.appDelegate.managedObjectContext executeFetchRequest:request
                                                               error:nil];
-    
     for (Bills *bill in array)
-        if ([bill.identifier isEqualToNumber:identifier]) {
+        if ([bill.identifier isEqualToNumber:identifier])
+        {
             return bill;
         }
     

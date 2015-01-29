@@ -12,7 +12,7 @@
 #import "BillsTableViewController.h"
 @protocol PaymentProtocol <NSObject>
 @required
--(void)resetContext;
+// -(void)resetContext;
 @end
 
 @interface AddPaymentViewController : UIViewController<UITabBarDelegate, UITableViewDataSource, TransferProtocol, BillProtocol>

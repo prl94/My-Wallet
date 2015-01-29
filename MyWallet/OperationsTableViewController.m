@@ -44,6 +44,7 @@ extern NSInteger billIndex;
             [temp addObject:p];
         }
     self.operations=(NSArray*)temp;
+        
     }
     
     if (self.operations.count!=0)
@@ -68,27 +69,25 @@ extern NSInteger billIndex;
         {
             [result addObject:[NSMutableArray array]];
             Payment *temp = [self.operations objectAtIndex:i];
-
             [[result lastObject]addObject:temp];
         }
         else
         {
-
             Payment *temp = [self.operations objectAtIndex:i];
             [[result lastObject]addObject:temp];
         }
-        
-             
     }
     self.operations=result;
     }
     
-    if (self.operations.count==0) {
+    else // if table is empty
+
+    {
         [self.backgroundView setHidden:NO];
         [self.backgroundLabel setHidden:NO];
         [self.tableView setScrollEnabled:NO];
     }
-
+    [self.tableView reloadData];
 }
 - (IBAction)addButtonPressed:(id)sender {
     self.tabBarController.selectedIndex = 2;
@@ -172,7 +171,7 @@ extern NSInteger billIndex;
 
     cell.billName.text=temp.kindOfPayment;
     cell.billSize.text=[NSString stringWithFormat:@"%1.2f", [temp.value floatValue]];
-    [cell.billSize setTextColor:[self getLabelColor:temp.value]];
+    [cell.billSize setTextColor:[self.appDelegate getLabelColor:temp.value]];
     cell.currency.text=temp.payment.currency;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
@@ -180,12 +179,6 @@ extern NSInteger billIndex;
     
     cell.backgroundColor=[UIColor whiteColor];
     return cell;
-}
--(UIColor*)getLabelColor:(NSNumber*)number{
-    if ([number floatValue]>=0)
-        return [UIColor greenColor];
-    else
-        return [UIColor redColor];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {

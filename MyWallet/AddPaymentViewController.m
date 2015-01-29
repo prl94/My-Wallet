@@ -11,7 +11,6 @@
 #import "Bills.h"
 #import "Payment.h"
 extern NSInteger billIndex;
-static NSInteger identifier=0;
 
 @interface AddPaymentViewController ()<UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentPayment;
@@ -43,61 +42,65 @@ static NSInteger identifier=0;
     [self.textFieldSu becomeFirstResponder];
     self.index=-1;
     [self.rightButton setEnabled:NO];
+    [self.tableViewIn setHidden:YES];
+    [self.tableViewOut setHidden:YES];
     self.appDelegate=[[UIApplication sharedApplication]delegate];
     self.managedObjectContext=self.appDelegate.managedObjectContext;
-}
+    }
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     [self.textboxInfo setText:@""];
     [self.textboxToday setText:@"Сегодня"];
     [self.textFieldSu setText:@""];
+    [self.segmentPayment setSelectedSegmentIndex:0];
+    [self setControlsVisibilityForPayment:@"Прибыль"];
+
+
 }
 - (IBAction)segmentPressed:(id)sender {
     if (self.segmentPayment.selectedSegmentIndex==1 || self.segmentPayment.selectedSegmentIndex==0){
-        [self.tableViewOut setHidden:YES];
-        [self.tableViewIn setHidden:YES];
-        [self.labelDate setHidden:NO];
-        [self.labelInfo setHidden:NO];
-        [self.labelSum setHidden:NO];
-        [self.textboxToday setHidden:NO];
-        [self.textFieldSu setHidden:NO];
-        [self.textboxInfo setHidden:NO];
-        [self.textboxToday setHidden:NO];
-        [self.buttonAdd setHidden:NO];
-        [self.rightButton setEnabled:NO];
-        self.navigationItem.title=@"Добавить";
-        [self.textFieldSu becomeFirstResponder];
-        [self.backgroundLabel setHidden:YES];
-
-
+        [self setControlsVisibilityForPayment:@"Прибыль"];
 
     }
-    if (self.segmentPayment.selectedSegmentIndex==2){
-        [self.tableViewOut setHidden:NO];
-        [self.tableViewIn setHidden:NO];
-        [self.labelDate setHidden:YES];
-        [self.labelSum setHidden:YES];
-        [self.labelInfo setHidden:YES];
-        [self.textboxToday setHidden:YES];
-        [self.textFieldSu setHidden:YES];
-        [self.textboxInfo setHidden:YES];
-        [self.textboxToday setHidden:YES];
-        [self.datePicker setHidden:YES];
-        [self.buttonAdd setHidden:YES];
+    if (self.segmentPayment.selectedSegmentIndex==2)
+        [self setControlsVisibilityForPayment:@"Перевод"];
+        
+}
+
+-(void)setControlsVisibilityForPayment:(NSString*)kindOfPayment{
+    BOOL visibility=NO;
+    if ([kindOfPayment isEqualToString:@"Перевод"])
+    {
+        visibility=YES;
         [self.textFieldSu resignFirstResponder];
         [self.textboxInfo resignFirstResponder];
         self.navigationItem.title=@"Шаг 1";
-        [self.rightButton setEnabled:YES];
         [self getArrayWithData];
-        if (self.bills.count<2) {
+        if (self.bills.count<2)
+        {
             [self.tableViewIn setHidden:YES];
             [self.tableViewOut setHidden:YES];
             [self.backgroundLabel setHidden:NO];
         }
+    }
+    else
+    {
+        self.navigationItem.title=@"Добавить";
+        [self.textFieldSu becomeFirstResponder];
+        [self.backgroundLabel setHidden:YES];
+        [self.tableViewOut setHidden:YES];
+        [self.tableViewIn setHidden:YES];
 
     }
-
+    [self.labelDate setHidden:visibility];
+    [self.labelInfo setHidden:visibility];
+    [self.labelSum setHidden:visibility];
+    [self.textboxToday setHidden:visibility];
+    [self.textFieldSu setHidden:visibility];
+    [self.textboxInfo setHidden:visibility];
+    [self.buttonAdd setHidden:visibility];
+    [self.rightButton setEnabled:visibility];
 }
 - (IBAction)cancelButtonPressed:(id)sender {
     if ([self.restorationIdentifier isEqualToString:@"1"]){
@@ -107,6 +110,7 @@ static NSInteger identifier=0;
         
     }];
    }
+
 - (IBAction)addButtonPressed:(id)sender {
     switch (self.segmentPayment.selectedSegmentIndex) {
         case 0:
@@ -134,13 +138,15 @@ static NSInteger identifier=0;
         temp.value=@([self.textFieldSu.text floatValue]);
         temp.kindOfPayment = @"Расход";
         temp.descriptionOfPayment=self.textboxInfo.text;
-        temp.identifier=@(identifier);
-        identifier=identifier+1;
+        temp.identifier=@([[self.appDelegate.defaults objectForKey:@"IdentifierPayments"]integerValue]+1);
+        [self.appDelegate.defaults setObject:temp.identifier forKey:@"IdentifierPayments"];
+
         currentBill.currentBalance= @([currentBill.currentBalance floatValue] - [temp.value floatValue]);
         [currentBill addPaymentObject:temp];
         [temp.managedObjectContext save:nil];
         [currentBill.managedObjectContext save:nil];
     }
+
 }
 
 -(void)addIncome{
@@ -154,8 +160,8 @@ static NSInteger identifier=0;
         temp.value=@([self.textFieldSu.text floatValue]);
         temp.kindOfPayment = @"Прибыль";
         temp.descriptionOfPayment=self.textboxInfo.text;
-        temp.identifier=@(identifier);
-        identifier=identifier+1;
+        temp.identifier=@([[self.appDelegate.defaults objectForKey:@"IdentifierPayments"]integerValue]+1);
+        [self.appDelegate.defaults setObject:temp.identifier forKey:@"IdentifierPayments"];
         currentBill.currentBalance= @([currentBill.currentBalance floatValue] + [temp.value floatValue]);
         [currentBill addPaymentObject:temp];
         [self.appDelegate.managedObjectContext save:nil];
@@ -175,23 +181,21 @@ static NSInteger identifier=0;
     firstTransfer.value=@([sum floatValue]);
     firstTransfer.kindOfPayment=@"Перевод";
     firstTransfer.comment=comment;
-    firstTransfer.identifier=@(identifier);
+    firstTransfer.identifier=@([[self.appDelegate.defaults objectForKey:@"IdentifierPayments"]integerValue]+1);
+    [self.appDelegate.defaults setObject:firstTransfer.identifier forKey:@"IdentifierPayments"];
     firstTransfer.descriptionOfPayment=[NSString stringWithFormat:@"%@", secondBill.identifier];
     firstTransfer.date=date;
     firstTransfer.toBill=secondBill.identifier;
     [firstBill addPaymentObject:firstTransfer];
     
-    
-    
-    
     [self.appDelegate.managedObjectContext save:nil];
-    [self.myDelegate resetContext];
     [self dismissViewControllerAnimated:NO completion:^{
         [self dismissViewControllerAnimated:NO completion:^{
         }];
 
     }];
     
+
 }
 
 

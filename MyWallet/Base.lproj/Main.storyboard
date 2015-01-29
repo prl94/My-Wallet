@@ -797,7 +797,7 @@
                                                         <barButtonItem style="plain" systemItem="flexibleSpace" id="MWl-9z-t7E"/>
                                                         <barButtonItem systemItem="trash" id="9pp-yM-rNi">
                                                             <connections>
-                                                                <action selector="deleteBillFromDataBase:" destination="0gN-dc-Sct" id="VVt-fy-hIE"/>
+                                                                <action selector="buttonDeletePressed:" destination="0gN-dc-Sct" id="PQu-qO-IeN"/>
                                                             </connections>
                                                         </barButtonItem>
                                                         <barButtonItem style="plain" systemItem="flexibleSpace" id="7be-Nz-E2D">
@@ -875,8 +875,12 @@
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="0gN-dc-Sct" id="14d-Qd-dIe"/>
+                                    <outlet property="delegate" destination="0gN-dc-Sct" id="5Jo-yn-SWN"/>
+                                </connections>
                             </tableView>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gEl-J9-el4">
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gEl-J9-el4">
                                 <rect key="frame" x="0.0" y="512" width="600" height="44"/>
                                 <color key="backgroundColor" white="0.71840277777777772" alpha="1" colorSpace="calibratedWhite"/>
                                 <items>
@@ -918,23 +922,23 @@
                         </subviews>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="gEl-J9-el4" secondAttribute="trailing" id="1Os-mG-Ojx"/>
-                            <constraint firstItem="bVM-q9-Bt0" firstAttribute="top" secondItem="gEl-J9-el4" secondAttribute="bottom" constant="5" id="3f4-V6-W5D"/>
+                            <constraint firstItem="U24-rW-HXS" firstAttribute="centerX" secondItem="NAa-s8-ck9" secondAttribute="centerX" id="27t-X3-58R"/>
+                            <constraint firstItem="U24-rW-HXS" firstAttribute="top" secondItem="Wai-Yd-jiO" secondAttribute="topMargin" constant="-67" id="6cw-LY-2VB"/>
                             <constraint firstItem="NAa-s8-ck9" firstAttribute="leading" secondItem="Wai-Yd-jiO" secondAttribute="leadingMargin" constant="57" id="6lf-A0-0ya"/>
                             <constraint firstItem="bVM-q9-Bt0" firstAttribute="top" secondItem="NAa-s8-ck9" secondAttribute="bottom" constant="12" id="8P0-cf-RDo"/>
                             <constraint firstItem="U24-rW-HXS" firstAttribute="top" secondItem="Wai-Yd-jiO" secondAttribute="topMargin" constant="-67" id="9K6-L4-CpU"/>
-                            <constraint firstItem="U24-rW-HXS" firstAttribute="top" secondItem="Wai-Yd-jiO" secondAttribute="topMargin" constant="-67" id="G0X-w9-wf1"/>
-                            <constraint firstItem="gEl-J9-el4" firstAttribute="leading" secondItem="Wai-Yd-jiO" secondAttribute="leading" id="GrT-0J-q8q"/>
+                            <constraint firstItem="U24-rW-HXS" firstAttribute="trailing" secondItem="gEl-J9-el4" secondAttribute="trailing" id="HBe-xM-Rdb"/>
                             <constraint firstItem="U24-rW-HXS" firstAttribute="trailing" secondItem="gEl-J9-el4" secondAttribute="trailing" id="ILM-no-FwS"/>
-                            <constraint firstItem="gEl-J9-el4" firstAttribute="trailing" secondItem="U24-rW-HXS" secondAttribute="trailing" id="KX4-sK-yaC"/>
-                            <constraint firstItem="gEl-J9-el4" firstAttribute="top" secondItem="U24-rW-HXS" secondAttribute="bottom" id="QPQ-zI-55w"/>
                             <constraint firstItem="U24-rW-HXS" firstAttribute="leading" secondItem="Wai-Yd-jiO" secondAttribute="leadingMargin" constant="-26" id="Rlq-mG-SPk"/>
+                            <constraint firstItem="gEl-J9-el4" firstAttribute="leading" secondItem="Wai-Yd-jiO" secondAttribute="leading" id="SCp-Cv-TpD"/>
                             <constraint firstItem="Ym1-c9-X1Y" firstAttribute="leading" secondItem="NAa-s8-ck9" secondAttribute="trailing" constant="8" symbolic="YES" id="SXw-uH-Yad"/>
-                            <constraint firstItem="U24-rW-HXS" firstAttribute="leading" secondItem="Wai-Yd-jiO" secondAttribute="leadingMargin" constant="-26" id="fb8-Mb-4kN"/>
+                            <constraint firstItem="gEl-J9-el4" firstAttribute="top" secondItem="U24-rW-HXS" secondAttribute="bottom" constant="5" id="SaE-Rs-8c4"/>
+                            <constraint firstItem="U24-rW-HXS" firstAttribute="leading" secondItem="Wai-Yd-jiO" secondAttribute="leadingMargin" constant="-26" id="Wme-vf-nQw"/>
                             <constraint firstItem="U24-rW-HXS" firstAttribute="bottom" secondItem="gEl-J9-el4" secondAttribute="top" id="ita-Js-uM0"/>
                             <constraint firstItem="Ym1-c9-X1Y" firstAttribute="baseline" secondItem="NAa-s8-ck9" secondAttribute="baseline" id="m63-7y-sX5"/>
-                            <constraint firstItem="NAa-s8-ck9" firstAttribute="centerX" secondItem="U24-rW-HXS" secondAttribute="centerX" id="o8v-34-ChM"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Ym1-c9-X1Y" secondAttribute="trailing" constant="17" id="ptx-Lp-f9K"/>
+                            <constraint firstItem="gEl-J9-el4" firstAttribute="bottom" secondItem="bVM-q9-Bt0" secondAttribute="top" id="uAi-2u-jRz"/>
+                            <constraint firstAttribute="trailing" secondItem="gEl-J9-el4" secondAttribute="trailing" id="wX3-Ub-SRd"/>
                         </constraints>
                         <variation key="default">
                             <mask key="subviews">
@@ -952,13 +956,9 @@
                         <variation key="widthClass=compact">
                             <mask key="constraints">
                                 <include reference="9K6-L4-CpU"/>
-                                <exclude reference="G0X-w9-wf1"/>
                                 <include reference="ILM-no-FwS"/>
                                 <include reference="Rlq-mG-SPk"/>
-                                <exclude reference="fb8-Mb-4kN"/>
                                 <include reference="ita-Js-uM0"/>
-                                <exclude reference="KX4-sK-yaC"/>
-                                <exclude reference="QPQ-zI-55w"/>
                             </mask>
                         </variation>
                     </view>
@@ -968,7 +968,7 @@
                         <barButtonItem key="leftBarButtonItem" systemItem="action" id="RP2-ox-rMW">
                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
-                                <action selector="test:" destination="0gN-dc-Sct" id="LsN-Nb-Eak"/>
+                                <action selector="buttonInfoPressed:" destination="0gN-dc-Sct" id="G4g-eg-LQH"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="URw-NL-nSG">
@@ -1466,11 +1466,7 @@
                                             <barButtonItem style="plain" systemItem="flexibleSpace" id="ghN-M3-Z38"/>
                                             <barButtonItem systemItem="organize" id="qX8-Me-U2J"/>
                                             <barButtonItem style="plain" systemItem="flexibleSpace" id="3bA-HG-0qg"/>
-                                            <barButtonItem systemItem="trash" id="XQT-Nw-Jgt">
-                                                <connections>
-                                                    <action selector="deleteBillFromDataBase:" destination="0gN-dc-Sct" id="8Iz-93-5nJ"/>
-                                                </connections>
-                                            </barButtonItem>
+                                            <barButtonItem systemItem="trash" id="XQT-Nw-Jgt"/>
                                             <barButtonItem style="plain" systemItem="flexibleSpace" id="lD6-R7-K6v">
                                                 <connections>
                                                     <action selector="eee:" destination="0gN-dc-Sct" id="Jeo-64-H9h"/>

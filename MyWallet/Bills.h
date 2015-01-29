@@ -27,5 +27,5 @@
 - (void)removePaymentObject:(Payment *)value;
 - (void)addPayment:(NSSet *)values;
 - (void)removePayment:(NSSet *)values;
-
++(void)getDataToArray:(NSArray*)array;
 @end

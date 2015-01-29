@@ -11,13 +11,11 @@
 #import "Payment.h"
 #import "Bills.h"
 extern NSInteger billIndex;
-static NSInteger identifier=0;
-@interface FirstViewController ()<UITableViewDataSource, UITableViewDelegate>
+@interface FirstViewController ()<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UILabel *labelBalance;
 @property (weak, nonatomic) IBOutlet UILabel *labelCurrency;
-
-@property (strong)AppDelegate *appDelegate;
+@property (strong) AppDelegate *appDelegate;
 @property (strong) NSManagedObjectContext *managedObjectContext;
 
 @property BOOL isHidden;
@@ -29,81 +27,49 @@ static NSInteger identifier=0;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.appDelegate=[[UIApplication sharedApplication]delegate];
     self.managedObjectContext=self.appDelegate.managedObjectContext;
 
-    [self getBalance];
     [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:30/255.f green:144/255.f blue:1.f alpha:1.f]]; // set background color
     self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor whiteColor]}; // set text color
+    
     self.index=-1;
     self.isHidden=YES;
     self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
-    self.tableView.delegate=self;
-    self.tableView.dataSource=self;
+    
+    
+    
     UIEdgeInsets inset = UIEdgeInsetsMake(self.navigationController.navigationBar.bounds.size.height*2, 0, 0, 0);
    [self.tableView setContentInset:inset];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:@(0.05) forKey:@"UAHtoUSD"];
-    [defaults setObject:@(0.015) forKey:@"RUBtoUSD"];
-    [defaults setObject:@(1.18) forKey:@"EURtoUSD"];
-    [defaults synchronize];
-    
-    
+        
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
-    [self.managedObjectContext save:nil];
-    [self.managedObjectContext reset];
     [self.tableView reloadData];
-    [self getBalance];
+    [self getCurrentBalance];
 }
 
 
--(void)getBalance{
-    NSArray *array = [self allObjects];
-    Bills *last = [[self allObjects]lastObject];
-    identifier=[last.identifier integerValue];
+-(void)getCurrentBalance{
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    CGFloat sum=0;
-    if ([defaults objectForKey:@"Currency"] == nil)
+    CGFloat result=0;
+    for (Bills *b in self.bills)
     {
-        [defaults setObject:@"EUR" forKey:@"Currency"];
+        result+=[self.appDelegate
+              convert:[b.currentBalance floatValue]
+              with:b.currency
+              to:[defaults objectForKey:@"Currency"]];
     }
-    for (Bills *b in array)
-        sum+=[self convert:[b.currentBalance floatValue]
-                      with:b.currency to:[defaults objectForKey:@"Currency"]];
-    if (sum>=0)
-        [self.labelBalance setTextColor:[UIColor greenColor]];
-    else [self.labelBalance setTextColor:[UIColor redColor]];
-    self.labelBalance.text=[NSString stringWithFormat:@"%1.2f", sum];
+    [self.labelBalance setTextColor:[self.appDelegate getLabelColor:@(result)]];
+     self.labelBalance.text=[NSString stringWithFormat:@"%1.2f", result];
     [self.labelCurrency setText: [defaults objectForKey:@"Currency"]];
     [defaults synchronize];
 
 }
 
--(CGFloat)convert:(CGFloat) value with:(NSString*)currency to:(NSString*)outputCurrency{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if ([currency isEqualToString:@"UAH"])
-        value*=[[defaults objectForKey:@"UAHtoUSD"]floatValue];
-    else if ([currency isEqualToString:@"RUB"])
-        value*=[[defaults objectForKey:@"RUBtoUSD"]floatValue];
-    else if ([currency isEqualToString:@"EUR"])
-        value*=[[defaults objectForKey:@"EURtoUSD"]floatValue];
-    value=[self convert:value to:outputCurrency];
-    return value;
-}
--(CGFloat) convert:(CGFloat)value to:(NSString*)currency{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if ([currency isEqualToString:@"UAH"])
-        value/=[[defaults objectForKey:@"UAHtoUSD"]floatValue];
-    else if ([currency isEqualToString:@"RUB"])
-        value/=[[defaults objectForKey:@"RUBtoUSD"]floatValue];
-    else if ([currency isEqualToString:@"EUR"])
-        value/=[[defaults objectForKey:@"EURtoUSD"]floatValue];
-    return value;
-}
-- (IBAction)test:(id)sender {
-    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Information" message:@"Something text" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:@"Other", nil];
+- (IBAction)buttonInfoPressed:(id)sender {
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Information" message:@"Something text" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
     [alert show];
 }
 
@@ -118,7 +84,7 @@ static NSInteger identifier=0;
     }
     else if ([[segue identifier] isEqualToString:@"editSegue"])
     {
-        Bills *bill= [self getBill:self.index];
+        Bills *bill= [self getBillFrom:self.index];
         self.myPopover =[[[segue destinationViewController] viewControllers] objectAtIndex:0];
         [self.myPopover setMyDelegate:self];
         [self.myPopover setEditingMode:YES];
@@ -147,38 +113,31 @@ static NSInteger identifier=0;
 }
 
 
-- (IBAction)deleteBillFromDataBase:(id)sender {
-    Bills *bill = [self getBill:self.index];
+- (IBAction)buttonDeletePressed:(id)sender
+{
+    Bills *bill = [self getBillFrom:self.index];
+    NSString *description = [NSString stringWithFormat:@"Все операции по счету будут удалены."
+                            "\nУдалить счет '%@'?", bill.nameBill];
+    UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:description
+                                                            delegate:self cancelButtonTitle:@"Отмена"destructiveButtonTitle:@"Удалить" otherButtonTitles:nil, nil];
+    [actionSheet showInView:self.view];
+}
+
+-(void)deleteBillFromDataBase{
+    Bills *bill = [self getBillFrom:self.index];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.index inSection:0];
     [self.managedObjectContext deleteObject:bill];
     [self.managedObjectContext save:nil];
-    [self getBalance];
+    [self getCurrentBalance];
     [self.tableView beginUpdates];
     [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationLeft];
     self.index=-1;
     [self.tableView endUpdates];
-    }
 
--(void)resetContext{
-    [self.managedObjectContext reset];
-    [self getArrayWithData];
-    [self.tableView beginUpdates];
-    [self.tableView reloadData];
-    [self.tableView endUpdates];
 }
--(void)printAllObjectsFromDataBase{
-    NSFetchRequest *request = [NSFetchRequest new];
-    [request setEntity:[NSEntityDescription entityForName:@"Payment" inManagedObjectContext:self.managedObjectContext]];
-    for (id s in [self.managedObjectContext executeFetchRequest:request error:nil]) {
-        if ([s isKindOfClass:[Payment class]])
-        {
-            Payment *temp = s;
-            if ([temp.payment.nameBill isEqual:@"ttt"])
-            NSLog(@"%@ - %@ - %@ - Name - %@",temp.date, temp.value, temp.kindOfPayment, temp.payment.nameBill);
-            
-        }
-        
-        
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if (buttonIndex==0) {
+        [self deleteBillFromDataBase];
     }
 }
 
@@ -194,18 +153,9 @@ static NSInteger identifier=0;
     self.bills = [ self.managedObjectContext executeFetchRequest:request error:&error];
 }
 
--(NSArray *)allObjects{
-    NSFetchRequest *request = [[NSFetchRequest alloc]init];
-    [request setReturnsObjectsAsFaults:NO];
-    NSEntityDescription *description = [NSEntityDescription entityForName:@"Bills" inManagedObjectContext:self.managedObjectContext];
-    [request setEntity:description];
-    
-    NSError *error = nil;
-    NSArray *result = [ self.managedObjectContext executeFetchRequest:request error:&error];
-    return result;
-}
+
 -(void)resaveBillFromIndex:(NSUInteger)index andName:(NSString*)name andBalance:(NSString*)balance andCurrency:(NSUInteger)currencyIndex{
-    Bills *bill = [self getBill:index];
+    Bills *bill = [self getBillFrom:index];
     NSString *currency;
     switch (currencyIndex)
     {
@@ -227,7 +177,7 @@ static NSInteger identifier=0;
     bill.startBalance=@([balance floatValue]);
     bill.currency=currency;
     [self.managedObjectContext save:nil];
-    [self getBalance];
+    [self getCurrentBalance];
     [self.tableView beginUpdates];
     [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]]
                           withRowAnimation:UITableViewRowAnimationFade];
@@ -237,7 +187,7 @@ static NSInteger identifier=0;
     
 }
 
--(Bills *)getBill:(NSInteger)index{
+-(Bills *)getBillFrom:(NSInteger)index{
     NSFetchRequest *request = [[NSFetchRequest alloc]init];
     
     NSEntityDescription *description = [NSEntityDescription entityForName:@"Bills" inManagedObjectContext:self.managedObjectContext];
@@ -255,11 +205,12 @@ static NSInteger identifier=0;
     bill.nameBill=name;
     bill.startBalance=@([size floatValue]);
     bill.currentBalance=@([size floatValue]);
-    identifier=identifier+1;
-    bill.identifier=@(identifier);
-    NSLog(@"Bill identifier is - %ld", identifier);
+    bill.identifier=@([[self.appDelegate.defaults objectForKey:@"IdentifierBills"]integerValue]+1);
+    [self.appDelegate.defaults setObject:bill.identifier forKey:@"IdentifierBills"];
     [self.managedObjectContext save:nil];
-    [self getBalance];
+    [self getCurrentBalance];
+    [self.appDelegate.defaults synchronize];
+
     [self.myPopover dismissViewControllerAnimated:YES completion:^{
         
     }];
@@ -274,7 +225,7 @@ static NSInteger identifier=0;
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     [self getArrayWithData];
-   return [self.bills count];
+    return [self.bills count];
 
 }
 
@@ -291,7 +242,7 @@ static NSInteger identifier=0;
     }
     cell.billName.text=temp.nameBill;
     cell.billSize.text=[NSString stringWithFormat:@"%1.2f", [temp.currentBalance floatValue]];
-    [cell.billSize setTextColor:[self getLabelColor:temp.currentBalance]];
+    [cell.billSize setTextColor:[self.appDelegate getLabelColor:temp.currentBalance]];
     cell.currency.text=temp.currency;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
@@ -303,12 +254,6 @@ static NSInteger identifier=0;
     
     cell.backgroundColor=[UIColor whiteColor];
     return cell;
-}
--(UIColor*)getLabelColor:(NSNumber*)number{
-    if ([number floatValue]>=0)
-        return [UIColor greenColor];
-    else
-        return [UIColor redColor];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -326,20 +271,6 @@ static NSInteger identifier=0;
     [self.tableView reloadData];
 //   [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationf];
     [tableView endUpdates];
-}
-
-- (void)saveContext
-{
-    NSError *error = nil;
-    NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
-    if (managedObjectContext != nil) {
-        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
-            // Replace this implementation with code to handle the error appropriately.
-            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        }
-    }
 }
 
 
